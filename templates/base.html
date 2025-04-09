@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manufacturing Database Management</title>
-    <!-- Bootstrap CSS from Replit CDN -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Date Range Picker Dependencies -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background-color: var(--light-bg);
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg" style="background-color: var(--accent-secondary); color: white;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+            <a class="navbar-brand text-white" href="{{ url_for('dashboard') }}">
                 <i class="fas fa-industry me-2"></i>Manufacturing DB
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,38 +32,38 @@
                 {% if current_user.is_authenticated %}
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('dashboard') %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('dashboard') %}active fw-bold{% endif %}" href="{{ url_for('dashboard') }}">
                             <i class="fas fa-chart-line me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('soldering_tips') %}active{% endif %}" href="{{ url_for('soldering_tips') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('soldering_tips') %}active fw-bold{% endif %}" href="{{ url_for('soldering_tips') }}">
                             <i class="fas fa-tools me-1"></i>Soldering Tip Requisition
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('machine_calibrations') %}active{% endif %}" href="{{ url_for('machine_calibrations') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('machine_calibrations') %}active fw-bold{% endif %}" href="{{ url_for('machine_calibrations') }}">
                             <i class="fas fa-cogs me-1"></i>Machine Calibration
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('overtime_logbook') %}active{% endif %}" href="{{ url_for('overtime_logbook') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('overtime_logbook') %}active fw-bold{% endif %}" href="{{ url_for('overtime_logbook') }}">
                             <i class="fas fa-user-clock me-1"></i>Overtime Logbook
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('equipment_downtime') %}active{% endif %}" href="{{ url_for('equipment_downtime') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('equipment_downtime') %}active fw-bold{% endif %}" href="{{ url_for('equipment_downtime') }}">
                             <i class="fas fa-power-off me-1"></i>Equipment Downtime
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('reports') %}active{% endif %}" href="{{ url_for('reports') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('reports') %}active fw-bold{% endif %}" href="{{ url_for('reports') }}">
                             <i class="fas fa-file-alt me-1"></i>Reports
                         </a>
                     </li>
                     {% if current_user.is_admin %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == url_for('user_management') %}active{% endif %}" href="{{ url_for('user_management') }}">
+                        <a class="nav-link text-white {% if request.path == url_for('user_management') %}active fw-bold{% endif %}" href="{{ url_for('user_management') }}">
                             <i class="fas fa-users-cog me-1"></i>User Management
                         </a>
                     </li>
@@ -66,7 +71,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -99,7 +104,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-3 mt-5">
+    <footer class="py-3 mt-5" style="background-color: var(--accent-secondary); color: white;">
         <div class="container text-center">
             <p class="mb-0">Manufacturing Database Management System &copy; 2023</p>
         </div>

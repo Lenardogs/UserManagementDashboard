@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import app, db
 from models import User, SolderingTip, MachineCalibration, OvertimeLogbook, EquipmentDowntime
-from forms import LoginForm, UserForm, SolderingTipForm, MachineCalibrationForm, OvertimeLogbookForm, EquipmentDowntimeForm, ReportForm
+from forms import LoginForm, UserForm, SolderingTipForm, MachineCalibrationForm, OvertimeLogbookForm, EquipmentDowntimeForm, ReportForm, ApprovalForm
 
 # Home/Dashboard route
 @app.route('/')
@@ -161,7 +161,8 @@ def delete_user(user_id):
 def soldering_tips():
     tips = SolderingTip.query.order_by(SolderingTip.date.desc()).all()
     form = SolderingTipForm()
-    return render_template('soldering_tip.html', tips=tips, form=form)
+    approval_form = ApprovalForm() if current_user.is_admin else None
+    return render_template('soldering_tip.html', tips=tips, form=form, approval_form=approval_form)
 
 @app.route('/soldering-tips/add', methods=['POST'])
 @login_required
@@ -173,11 +174,13 @@ def add_soldering_tip():
             engineer_name=form.engineer_name.data,
             personnel_name=form.personnel_name.data,
             shift=form.shift.data,
-            date=form.date.data
+            date=form.date.data,
+            user_id=current_user.id,
+            status='pending'
         )
         db.session.add(tip)
         db.session.commit()
-        flash('Soldering tip requisition added successfully!', 'success')
+        flash('Soldering tip requisition submitted for approval!', 'success')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -217,13 +220,40 @@ def delete_soldering_tip(tip_id):
     flash('Soldering tip requisition deleted successfully!', 'success')
     return redirect(url_for('soldering_tips'))
 
+@app.route('/soldering-tips/approve', methods=['POST'])
+@login_required
+def approve_soldering_tip():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+        
+    form = ApprovalForm()
+    if form.validate_on_submit():
+        tip_id = form.item_id.data
+        tip = SolderingTip.query.get_or_404(tip_id)
+        
+        tip.status = form.status.data
+        tip.approved_by = current_user.id
+        tip.approval_date = datetime.now()
+        
+        if form.status.data == 'rejected' and form.rejection_reason.data:
+            tip.rejection_reason = form.rejection_reason.data
+            
+        db.session.commit()
+        
+        status_message = 'approved' if form.status.data == 'approved' else 'rejected'
+        flash(f'Soldering tip requisition has been {status_message}!', 'success')
+    
+    return redirect(url_for('soldering_tips'))
+
 # Machine Calibration Scheduler routes
 @app.route('/machine-calibrations')
 @login_required
 def machine_calibrations():
     calibrations = MachineCalibration.query.all()
     form = MachineCalibrationForm()
-    return render_template('machine_calibration.html', calibrations=calibrations, form=form)
+    approval_form = ApprovalForm() if current_user.is_admin else None
+    return render_template('machine_calibration.html', calibrations=calibrations, form=form, approval_form=approval_form)
 
 @app.route('/machine-calibrations/add', methods=['POST'])
 @login_required
@@ -234,11 +264,13 @@ def add_machine_calibration():
             machine_name=form.machine_name.data,
             days_per_calibration=form.days_per_calibration.data,
             location_line=form.location_line.data,
-            operator_name=form.operator_name.data
+            operator_name=form.operator_name.data,
+            user_id=current_user.id,
+            status='pending'
         )
         db.session.add(calibration)
         db.session.commit()
-        flash('Machine calibration schedule added successfully!', 'success')
+        flash('Machine calibration schedule submitted for approval!', 'success')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -276,13 +308,40 @@ def delete_machine_calibration(calibration_id):
     flash('Machine calibration schedule deleted successfully!', 'success')
     return redirect(url_for('machine_calibrations'))
 
+@app.route('/machine-calibrations/approve', methods=['POST'])
+@login_required
+def approve_machine_calibration():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+        
+    form = ApprovalForm()
+    if form.validate_on_submit():
+        calibration_id = form.item_id.data
+        calibration = MachineCalibration.query.get_or_404(calibration_id)
+        
+        calibration.status = form.status.data
+        calibration.approved_by = current_user.id
+        calibration.approval_date = datetime.now()
+        
+        if form.status.data == 'rejected' and form.rejection_reason.data:
+            calibration.rejection_reason = form.rejection_reason.data
+            
+        db.session.commit()
+        
+        status_message = 'approved' if form.status.data == 'approved' else 'rejected'
+        flash(f'Machine calibration schedule has been {status_message}!', 'success')
+    
+    return redirect(url_for('machine_calibrations'))
+
 # Overtime Logbook routes
 @app.route('/overtime-logbook')
 @login_required
 def overtime_logbook():
     logs = OvertimeLogbook.query.order_by(OvertimeLogbook.date.desc()).all()
     form = OvertimeLogbookForm()
-    return render_template('overtime_logbook.html', logs=logs, form=form)
+    approval_form = ApprovalForm() if current_user.is_admin else None
+    return render_template('overtime_logbook.html', logs=logs, form=form, approval_form=approval_form)
 
 @app.route('/overtime-logbook/add', methods=['POST'])
 @login_required
@@ -292,11 +351,13 @@ def add_overtime_log():
         log = OvertimeLogbook(
             employee_name=form.employee_name.data,
             date=form.date.data,
-            hours=form.hours.data
+            hours=form.hours.data,
+            user_id=current_user.id,
+            status='pending'
         )
         db.session.add(log)
         db.session.commit()
-        flash('Overtime log added successfully!', 'success')
+        flash('Overtime log submitted for approval!', 'success')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -333,13 +394,40 @@ def delete_overtime_log(log_id):
     flash('Overtime log deleted successfully!', 'success')
     return redirect(url_for('overtime_logbook'))
 
+@app.route('/overtime-logbook/approve', methods=['POST'])
+@login_required
+def approve_overtime_log():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+        
+    form = ApprovalForm()
+    if form.validate_on_submit():
+        log_id = form.item_id.data
+        log = OvertimeLogbook.query.get_or_404(log_id)
+        
+        log.status = form.status.data
+        log.approved_by = current_user.id
+        log.approval_date = datetime.now()
+        
+        if form.status.data == 'rejected' and form.rejection_reason.data:
+            log.rejection_reason = form.rejection_reason.data
+            
+        db.session.commit()
+        
+        status_message = 'approved' if form.status.data == 'approved' else 'rejected'
+        flash(f'Overtime log has been {status_message}!', 'success')
+    
+    return redirect(url_for('overtime_logbook'))
+
 # Equipment Downtime routes
 @app.route('/equipment-downtime')
 @login_required
 def equipment_downtime():
     downtimes = EquipmentDowntime.query.order_by(EquipmentDowntime.date.desc()).all()
     form = EquipmentDowntimeForm()
-    return render_template('equipment_downtime.html', downtimes=downtimes, form=form)
+    approval_form = ApprovalForm() if current_user.is_admin else None
+    return render_template('equipment_downtime.html', downtimes=downtimes, form=form, approval_form=approval_form)
 
 @app.route('/equipment-downtime/add', methods=['POST'])
 @login_required
@@ -353,11 +441,13 @@ def add_equipment_downtime():
             downtime_minutes=form.downtime_minutes.data,
             shift=form.shift.data,
             action_taken=form.action_taken.data,
-            date=form.date.data
+            date=form.date.data,
+            user_id=current_user.id,
+            status='pending'
         )
         db.session.add(downtime)
         db.session.commit()
-        flash('Equipment downtime record added successfully!', 'success')
+        flash('Equipment downtime record submitted for approval!', 'success')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -396,6 +486,32 @@ def delete_equipment_downtime(downtime_id):
     db.session.delete(downtime)
     db.session.commit()
     flash('Equipment downtime record deleted successfully!', 'success')
+    return redirect(url_for('equipment_downtime'))
+
+@app.route('/equipment-downtime/approve', methods=['POST'])
+@login_required
+def approve_equipment_downtime():
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard'))
+        
+    form = ApprovalForm()
+    if form.validate_on_submit():
+        downtime_id = form.item_id.data
+        downtime = EquipmentDowntime.query.get_or_404(downtime_id)
+        
+        downtime.status = form.status.data
+        downtime.approved_by = current_user.id
+        downtime.approval_date = datetime.now()
+        
+        if form.status.data == 'rejected' and form.rejection_reason.data:
+            downtime.rejection_reason = form.rejection_reason.data
+            
+        db.session.commit()
+        
+        status_message = 'approved' if form.status.data == 'approved' else 'rejected'
+        flash(f'Equipment downtime record has been {status_message}!', 'success')
+    
     return redirect(url_for('equipment_downtime'))
 
 # Reports routes

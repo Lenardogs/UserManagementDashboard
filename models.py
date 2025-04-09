@@ -21,6 +21,11 @@ class SolderingTip(db.Model):
     shift = db.Column(db.String(20), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending', nullable=False)  # pending, approved, rejected
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approval_date = db.Column(db.DateTime, nullable=True)
+    rejection_reason = db.Column(db.Text, nullable=True)
     
     def __repr__(self):
         return f'<SolderingTip {self.machine_name} {self.date}>'
@@ -32,6 +37,11 @@ class MachineCalibration(db.Model):
     location_line = db.Column(db.String(100), nullable=False)
     operator_name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending', nullable=False)  # pending, approved, rejected
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approval_date = db.Column(db.DateTime, nullable=True)
+    rejection_reason = db.Column(db.Text, nullable=True)
     
     def __repr__(self):
         return f'<MachineCalibration {self.machine_name}>'
@@ -42,6 +52,11 @@ class OvertimeLogbook(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     hours = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending', nullable=False)  # pending, approved, rejected
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approval_date = db.Column(db.DateTime, nullable=True)
+    rejection_reason = db.Column(db.Text, nullable=True)
     
     def __repr__(self):
         return f'<OvertimeLogbook {self.employee_name} {self.date}>'
@@ -56,6 +71,11 @@ class EquipmentDowntime(db.Model):
     action_taken = db.Column(db.Text, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending', nullable=False)  # pending, approved, rejected
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approval_date = db.Column(db.DateTime, nullable=True)
+    rejection_reason = db.Column(db.Text, nullable=True)
     
     def __repr__(self):
         return f'<EquipmentDowntime {self.equipment_name} {self.date}>'

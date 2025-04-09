@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FloatField, DateField, HiddenField
+from wtforms import StringField, PasswordField, BooleanField, SelectField, TextAreaField, IntegerField, FloatField, DateField, HiddenField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, NumberRange
 
 class LoginForm(FlaskForm):
@@ -53,3 +53,12 @@ class ReportForm(FlaskForm):
     ], validators=[DataRequired()])
     start_date = DateField('Start Date', validators=[DataRequired()])
     end_date = DateField('End Date', validators=[DataRequired()])
+
+class ApprovalForm(FlaskForm):
+    item_id = HiddenField('Item ID', validators=[DataRequired()])
+    status = SelectField('Status', choices=[
+        ('approved', 'Approve'), 
+        ('rejected', 'Reject')
+    ], validators=[DataRequired()])
+    rejection_reason = TextAreaField('Reason for Rejection', validators=[Optional()])
+    submit = SubmitField('Submit')

@@ -1,0 +1,106 @@
+/* Custom styles for the application */
+
+/* Improve spacing and readability */
+body {
+    padding-bottom: 20px;
+}
+
+/* Add some hover effects to the navbar */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Custom card styling */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+/* Custom table styling */
+.table th {
+    font-weight: 600;
+    border-top: none;
+}
+
+/* Print-specific styling */
+@media print {
+    .navbar, .footer, .no-print, button, form {
+        display: none !important;
+    }
+    
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa !important;
+        color: #212529 !important;
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* Dashboard stat cards */
+.card.bg-opacity-10 {
+    transition: transform 0.2s ease;
+}
+
+.card.bg-opacity-10:hover {
+    transform: translateY(-5px);
+}
+
+/* Custom form styles */
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Table row hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Modal animations */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Ensure consistent button spacing */
+.btn-group > .btn {
+    margin-right: 0;
+}
+
+/* Add some subtle transitions */
+.alert {
+    transition: opacity 0.5s ease;
+}
+
+/* Improve the text readability in dark mode */
+[data-bs-theme=dark] .text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}

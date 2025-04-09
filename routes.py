@@ -1,8 +1,9 @@
 import calendar
 from datetime import datetime, timedelta
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request, jsonify, send_file, make_response
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
+from export_utils import generate_pdf_report, generate_excel_report
 from app import app, db
 from models import User, SolderingTip, MachineCalibration, OvertimeLogbook, EquipmentDowntime
 from forms import LoginForm, UserForm, SolderingTipForm, MachineCalibrationForm, OvertimeLogbookForm, EquipmentDowntimeForm, ReportForm, ApprovalForm
@@ -570,6 +571,73 @@ def generate_report():
                                   end_date=end_date.date())
     
     return render_template('reports.html', form=form)
+
+# Export routes
+@app.route('/export/pdf/<report_type>/<start_date>/<end_date>')
+@login_required
+def export_to_pdf(report_type, start_date, end_date):
+    # Convert string dates to datetime objects
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+    
+    # End date should be end of day for inclusive queries
+    end_datetime = datetime.combine(end_date, datetime.max.time())
+    
+    # Get records based on report type
+    if report_type == 'soldering_tips':
+        records = SolderingTip.query.filter(SolderingTip.date.between(start_date, end_datetime)).all()
+    elif report_type == 'machine_calibrations':
+        records = MachineCalibration.query.all()  # No date filter for calibrations
+    elif report_type == 'overtime_logbook':
+        records = OvertimeLogbook.query.filter(OvertimeLogbook.date.between(start_date, end_datetime)).all()
+    elif report_type == 'equipment_downtime':
+        records = EquipmentDowntime.query.filter(EquipmentDowntime.date.between(start_date, end_datetime)).all()
+    else:
+        flash('Invalid report type', 'danger')
+        return redirect(url_for('reports'))
+    
+    # Generate PDF report
+    pdf_buffer = generate_pdf_report(records, report_type, start_date, end_date)
+    
+    # Set up response
+    response = make_response(pdf_buffer.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename={report_type}_{start_date}_to_{end_date}.pdf'
+    
+    return response
+
+@app.route('/export/excel/<report_type>/<start_date>/<end_date>')
+@login_required
+def export_to_excel(report_type, start_date, end_date):
+    # Convert string dates to datetime objects
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+    
+    # End date should be end of day for inclusive queries
+    end_datetime = datetime.combine(end_date, datetime.max.time())
+    
+    # Get records based on report type
+    if report_type == 'soldering_tips':
+        records = SolderingTip.query.filter(SolderingTip.date.between(start_date, end_datetime)).all()
+    elif report_type == 'machine_calibrations':
+        records = MachineCalibration.query.all()  # No date filter for calibrations
+    elif report_type == 'overtime_logbook':
+        records = OvertimeLogbook.query.filter(OvertimeLogbook.date.between(start_date, end_datetime)).all()
+    elif report_type == 'equipment_downtime':
+        records = EquipmentDowntime.query.filter(EquipmentDowntime.date.between(start_date, end_datetime)).all()
+    else:
+        flash('Invalid report type', 'danger')
+        return redirect(url_for('reports'))
+    
+    # Generate Excel report
+    excel_buffer = generate_excel_report(records, report_type, start_date, end_date)
+    
+    # Set up response
+    response = make_response(excel_buffer.getvalue())
+    response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    response.headers['Content-Disposition'] = f'attachment; filename={report_type}_{start_date}_to_{end_date}.xlsx'
+    
+    return response
 
 # API routes for dashboard charts
 @app.route('/api/dashboard/soldering_tips_data')

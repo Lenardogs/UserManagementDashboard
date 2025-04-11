@@ -23,6 +23,9 @@ class SolderingTipForm(FlaskForm):
     personnel_name = StringField('Personnel Name', validators=[DataRequired(), Length(max=100)])
     shift = SelectField('Shift', choices=[('morning', 'Morning'), ('afternoon', 'Afternoon'), ('night', 'Night')], validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()])
+    quantity = IntegerField('Current Quantity', validators=[DataRequired(), NumberRange(min=0)])
+    max_quantity = IntegerField('Maximum Quantity', validators=[DataRequired(), NumberRange(min=1)])
+    threshold = IntegerField('Low Stock Threshold', validators=[DataRequired(), NumberRange(min=1)])
 
 class MachineCalibrationForm(FlaskForm):
     machine_name = StringField('Machine Name', validators=[DataRequired(), Length(max=100)])

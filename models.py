@@ -21,6 +21,9 @@ class SolderingTip(db.Model):
     shift = db.Column(db.String(20), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    quantity = db.Column(db.Integer, default=0)
+    max_quantity = db.Column(db.Integer, default=100)
+    threshold = db.Column(db.Integer, default=20)  # Low stock threshold
     
     def __repr__(self):
         return f'<SolderingTip {self.machine_name} {self.date}>'

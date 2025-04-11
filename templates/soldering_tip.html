@@ -102,7 +102,6 @@
                                 <th>Personnel</th>
                                 <th>Shift</th>
                                 <th>Date</th>
-                                <th>Stock Level</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -113,21 +112,7 @@
                                 <td>{{ tip.engineer_name }}</td>
                                 <td>{{ tip.personnel_name }}</td>
                                 <td>{{ tip.shift|capitalize }}</td>
-                                <td>{{ tip.date.strftime('%Y-%m-d') }}</td>
-                                <td>
-                                    <div class="progress" style="height: 20px;">
-                                        {% set percentage = (tip.quantity / tip.max_quantity * 100)|int %}
-                                        {% set color = 'danger' if tip.quantity <= tip.threshold else 'success' %}
-                                        <div class="progress-bar bg-{{ color }}" 
-                                             role="progressbar" 
-                                             style="width: {{ percentage }}%"
-                                             aria-valuenow="{{ tip.quantity }}" 
-                                             aria-valuemin="0" 
-                                             aria-valuemax="{{ tip.max_quantity }}">
-                                            {{ tip.quantity }}/{{ tip.max_quantity }}
-                                        </div>
-                                    </div>
-                                </td>
+                                <td>{{ tip.date.strftime('%Y-%m-%d') }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         <a href="{{ url_for('edit_soldering_tip', tip_id=tip.id) }}" class="btn btn-warning">

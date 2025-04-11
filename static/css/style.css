@@ -9,19 +9,8 @@
 }
 
 /* Improve spacing and readability */
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-main {
-    flex: 1 0 auto;
+    padding-bottom: 20px;
 }
 
 /* Add some hover effects to the navbar */

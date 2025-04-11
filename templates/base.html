@@ -15,6 +15,102 @@
     <style>
         body {
             background-color: var(--light-bg);
+            padding-top: 76px; /* Height of navbar + some padding */
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--accent-secondary) !important;
+        }
+
+        /* Navbar Hover Effects */
+        .navbar-nav .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--light-bg) !important;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border-bottom: 2px solid white;
+        }
+
+        /* Prevent navbar from shaking */
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            width: 100%;
+        }
+
+        /* Prevent dropdown menu from shaking */
+        .dropdown-menu {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-top: 0.125rem;
+        }
+
+        .dropdown-menu.show {
+            transform: none;
+            opacity: 1;
+        }
+
+        /* Prevent navbar from jumping */
+        .navbar-brand {
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: var(--light-bg) !important;
+        }
+
+        /* Prevent navbar toggler from jumping */
+        .navbar-toggler {
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .navbar-toggler:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Prevent navbar from shaking on mobile */
+        @media (max-width: 991.98px) {
+            .navbar {
+                padding: 0.5rem 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem 1rem;
+                margin: 0;
+            }
         }
     </style>
 </head>
@@ -128,4 +224,3 @@
         {% block scripts %}{% endblock %}
     </body>
     </html>
-

@@ -65,9 +65,15 @@ def user_management():
         flash('Access denied. Admin privileges required.', 'danger')
         return redirect(url_for('dashboard'))
     
-    users = User.query.all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        users = User.query.filter(
+            User.username.ilike(f'%{search_query}%')
+        ).all()
+    else:
+        users = User.query.all()
     form = UserForm()
-    return render_template('user_management.html', users=users, form=form)
+    return render_template('user_management.html', users=users, form=form, search_query=search_query)
 
 @app.route('/users/add', methods=['POST'])
 @login_required
@@ -159,9 +165,15 @@ def delete_user(user_id):
 @app.route('/soldering-tips')
 @login_required
 def soldering_tips():
-    tips = SolderingTip.query.order_by(SolderingTip.date.desc()).all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        tips = SolderingTip.query.filter(
+            SolderingTip.machine_name.ilike(f'%{search_query}%')
+        ).order_by(SolderingTip.date.desc()).all()
+    else:
+        tips = SolderingTip.query.order_by(SolderingTip.date.desc()).all()
     form = SolderingTipForm()
-    return render_template('soldering_tip.html', tips=tips, form=form)
+    return render_template('soldering_tip.html', tips=tips, form=form, search_query=search_query)
 
 @app.route('/soldering-tips/add', methods=['POST'])
 @login_required
@@ -221,9 +233,15 @@ def delete_soldering_tip(tip_id):
 @app.route('/machine-calibrations')
 @login_required
 def machine_calibrations():
-    calibrations = MachineCalibration.query.all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        calibrations = MachineCalibration.query.filter(
+            MachineCalibration.machine_name.ilike(f'%{search_query}%')
+        ).all()
+    else:
+        calibrations = MachineCalibration.query.all()
     form = MachineCalibrationForm()
-    return render_template('machine_calibration.html', calibrations=calibrations, form=form)
+    return render_template('machine_calibration.html', calibrations=calibrations, form=form, search_query=search_query)
 
 @app.route('/machine-calibrations/add', methods=['POST'])
 @login_required
@@ -280,9 +298,15 @@ def delete_machine_calibration(calibration_id):
 @app.route('/overtime-logbook')
 @login_required
 def overtime_logbook():
-    logs = OvertimeLogbook.query.order_by(OvertimeLogbook.date.desc()).all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        logs = OvertimeLogbook.query.filter(
+            OvertimeLogbook.employee_name.ilike(f'%{search_query}%')
+        ).order_by(OvertimeLogbook.date.desc()).all()
+    else:
+        logs = OvertimeLogbook.query.order_by(OvertimeLogbook.date.desc()).all()
     form = OvertimeLogbookForm()
-    return render_template('overtime_logbook.html', logs=logs, form=form)
+    return render_template('overtime_logbook.html', logs=logs, form=form, search_query=search_query)
 
 @app.route('/overtime-logbook/add', methods=['POST'])
 @login_required
@@ -337,9 +361,15 @@ def delete_overtime_log(log_id):
 @app.route('/equipment-downtime')
 @login_required
 def equipment_downtime():
-    downtimes = EquipmentDowntime.query.order_by(EquipmentDowntime.date.desc()).all()
+    search_query = request.args.get('search', '')
+    if search_query:
+        downtimes = EquipmentDowntime.query.filter(
+            EquipmentDowntime.equipment_name.ilike(f'%{search_query}%')
+        ).order_by(EquipmentDowntime.date.desc()).all()
+    else:
+        downtimes = EquipmentDowntime.query.order_by(EquipmentDowntime.date.desc()).all()
     form = EquipmentDowntimeForm()
-    return render_template('equipment_downtime.html', downtimes=downtimes, form=form)
+    return render_template('equipment_downtime.html', downtimes=downtimes, form=form, search_query=search_query)
 
 @app.route('/equipment-downtime/add', methods=['POST'])
 @login_required
